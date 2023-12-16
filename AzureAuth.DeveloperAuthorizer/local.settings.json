@@ -1,0 +1,10 @@
+{
+  "Host": { "CORS": "*" },
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "JWT:Secret": "USE KEYVAULT!V8wgKZ9YkHNd/tdUa0FreJTegYlaozQkslrBhN1jugK0j+eqlSCSz8TFg4XxFN45/mj7fvAI",
+    "JWT:Issuer": "Developer Authorizer",
+    "JWT:Audience": "Developers"
+  }
+}

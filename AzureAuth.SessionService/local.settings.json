@@ -1,0 +1,17 @@
+{
+  "Host": {
+    "CORS": "https://localhost:7031",
+    "CORSCredentials": true,
+    "LocalHttpPort": 7060
+  },
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "JWT:Secret": "USE KEYVAULT!V8wgKZ9YkHNd/tdUa0FreJTegYlaozQkslrBhN1jugK0j+eqlSCSz8TFg4XxFN45/mj7fvAI",
+    "JWT:Issuer": "Core Session Auth",
+    "JWT:Audience": "Users",
+    "JWT:ValidAudiences": "Users,Services",
+    "JWT:ValidIssuers": "Core Session Auth,Developer Authorizer,Core Reference API"
+  }
+}
