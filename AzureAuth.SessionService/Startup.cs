@@ -11,9 +11,7 @@ internal class Startup : FunctionsStartup
 {
     public override void Configure(IFunctionsHostBuilder builder)
     {
-        builder.Services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
         builder.Services.AddSingleton<ClaimsRepository>();
-
         builder.Services.AddSingleton<UserAuthHandler>();
         builder.Services.AddSingleton<ServiceAuthHandler>();
         builder.Services.AddJWTManager();
