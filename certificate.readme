@@ -1,0 +1,13 @@
+Most projects in this solution are configured to use
+a self-signed certificate for debugging over https.
+
+Run the script "GenerateCertificate.ps1" AS ADMINISTRATOR to
+generate such a certificate.
+
+The password of this certificate is "123456" (without quotes).
+
+To make your browser, and other windows applications, trust the certificate,
+install it to the "Trusted Root Certification Authorities" store.
+
+Do this by following the wizard started by double clicking the certificate file
+in the file explorer.

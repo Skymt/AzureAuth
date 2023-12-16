@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AzureAuth.DeveloperAuthorizer": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7022 --useHttps --cert $(ProjectDir)\\..\\certificate.pfx --password \"123456\""
+    }
+  }
+}

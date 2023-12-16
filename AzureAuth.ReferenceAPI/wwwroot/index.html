@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript">
+        class JWTClient {
+            #sessionServiceEndpoint; #jwt; #sessionIssuer;
+            constructor(sessionServiceEndpoint) {
+                this.#sessionServiceEndpoint = sessionServiceEndpoint;
+            }
+
+            async login(authJWT) {
+                let fetchOptions = { credentials: "include" };
+                if (!authJWT && this.#jwt) authJWT = this.#jwt;
+                if (authJWT) fetchOptions.headers = { Authorization: "Bearer " + authJWT }
+                
+                return await fetch(this.#sessionServiceEndpoint + '/api/Login', fetchOptions)
+                    .then(r => r.json()).then(jwt => this.#jwt = jwt.token)
+                    .then(() => true).catch(() => false)
+            }
+            async logout() {
+                await fetch(this.#sessionServiceEndpoint + '/api/Logout', { credentials: "include" });
+                this.#jwt = null;
+            }
+            async fetch(endpoint, options) {
+                if (!this.authorized) throw new Error('Unauthorized');
+                if (this.claims.exp * 1000 < new Date()) await this.login();
+
+                options = options || {};
+                options.headers = options.headers || {};
+                options.headers["Authorization"] = "Bearer " + this.#jwt;
+                return await fetch(endpoint, options).then(async r => {
+                    if (r.headers.has("Authorization")) {
+                        var header = r.headers.get("Authorization");
+                        this.#jwt = header.substring(7);
+                        if (this.#sessionIssuer != this.claims.iss) await this.login();
+                    }
+                    return r;
+                });
+            }
+            get authorized() { return !!this.#jwt; }
+            get claims() { if (this.authorized) return JSON.parse(atob(this.#jwt.split('.')[1])); }
+        }
+    </script>
+</head>
+<body>
+    <code>This page is useless without developer tools.</code>
+    <script type="text/javascript">
+        console.log('To be honest, it is pretty useless in the developer tools too... To get anything done use the console.');
+        console.log('E.g: let client = await CreateClient();');
+
+        async function GetJWTFromDeveloperAuthorizer(userName) {
+            let jwt = await fetch('https://localhost:7022/api/DevJWT/' + (userName || 'DevMan123')).then(r => r.text());
+            return jwt;
+        };
+
+        async function SendJWTToSessionService(jwt) {
+            let session = await fetch('https://localhost:7060/api/Login', { credentials: "include", headers: { Authorization: "Bearer " + jwt } }).then(r => r.json());
+            return session;
+        };
+
+        async function CreateClient(userName) {
+            var client = new JWTClient('https://localhost:7060');
+            if (!await client.login()) {
+                console.log('Fetching new JWT from Developer authorizer using username ' + userName);
+                let jwt = await GetJWTFromDeveloperAuthorizer(userName);
+                await client.login(jwt);
+            }
+            console.log('Sucess! Your client is ready');
+            if (userName && userName != client.claims.unique_name)
+                console.log('Warning: The username in the JWT does not match the username requested.');
+
+            return client;
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.Core", "AzureAuth.Core\AzureAuth.Core.csproj", "{78533E2C-6406-4BD3-BCEA-10FB45B96662}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.DeveloperAuthorizer", "AzureAuth.DeveloperAuthorizer\AzureAuth.DeveloperAuthorizer.csproj", "{17AC9996-B1AB-47B2-A242-65B9088B0CD2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.SessionService", "AzureAuth.AuthenticationFunctions\AzureAuth.SessionService.csproj", "{B8A83B72-3D2F-44B7-80F4-A3C21A0ECA57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.ReferenceAPI", "AzureAuth.ReferenceAPI\AzureAuth.ReferenceAPI.csproj", "{D6C62E6B-D65E-4EEE-8EDC-7EBFF05C17BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Certificate", "Certificate", "{82D09850-6049-4715-93E6-E992965B98F4}"
+	ProjectSection(SolutionItems) = preProject
+		certificate.pfx = certificate.pfx
+		certificate.readme = certificate.readme
+		GenerateCertificate.ps1 = GenerateCertificate.ps1
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78533E2C-6406-4BD3-BCEA-10FB45B96662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78533E2C-6406-4BD3-BCEA-10FB45B96662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78533E2C-6406-4BD3-BCEA-10FB45B96662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78533E2C-6406-4BD3-BCEA-10FB45B96662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17AC9996-B1AB-47B2-A242-65B9088B0CD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17AC9996-B1AB-47B2-A242-65B9088B0CD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17AC9996-B1AB-47B2-A242-65B9088B0CD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17AC9996-B1AB-47B2-A242-65B9088B0CD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8A83B72-3D2F-44B7-80F4-A3C21A0ECA57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8A83B72-3D2F-44B7-80F4-A3C21A0ECA57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8A83B72-3D2F-44B7-80F4-A3C21A0ECA57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8A83B72-3D2F-44B7-80F4-A3C21A0ECA57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6C62E6B-D65E-4EEE-8EDC-7EBFF05C17BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6C62E6B-D65E-4EEE-8EDC-7EBFF05C17BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6C62E6B-D65E-4EEE-8EDC-7EBFF05C17BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6C62E6B-D65E-4EEE-8EDC-7EBFF05C17BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44495056-9A2F-42D7-8C48-9E84E6FEC8C2}
+	EndGlobalSection
+EndGlobal

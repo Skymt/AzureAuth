@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AzureAuth.SessionService": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7060 --useHttps --cert $(ProjectDir)\\..\\certificate.pfx --password \"123456\""
+    }
+  }
+}
