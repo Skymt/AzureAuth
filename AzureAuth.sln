@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.Core", "AzureAuth
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.DeveloperAuthorizer", "AzureAuth.DeveloperAuthorizer\AzureAuth.DeveloperAuthorizer.csproj", "{17AC9996-B1AB-47B2-A242-65B9088B0CD2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.SessionService", "AzureAuth.AuthenticationFunctions\AzureAuth.SessionService.csproj", "{B8A83B72-3D2F-44B7-80F4-A3C21A0ECA57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.SessionService", "AzureAuth.SessionService\AzureAuth.SessionService.csproj", "{B8A83B72-3D2F-44B7-80F4-A3C21A0ECA57}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.ReferenceAPI", "AzureAuth.ReferenceAPI\AzureAuth.ReferenceAPI.csproj", "{D6C62E6B-D65E-4EEE-8EDC-7EBFF05C17BD}"
 EndProject
