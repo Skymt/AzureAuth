@@ -66,10 +66,10 @@ public class ClaimsRepository
     {
         var query = new TableQuery<ClaimsEntity>()
             .Where(TableQuery.GenerateFilterConditionForBool(
-                               nameof(ClaimsEntity.Recycled),
-                                              QueryComparisons.Equal,
-                                                             false)
-                   );
+                nameof(ClaimsEntity.Recycled),
+                QueryComparisons.Equal,
+                false)
+            );
         var unrecycled = new List<ClaimsEntity>();
         TableContinuationToken continuation = null;
         do
@@ -88,7 +88,7 @@ public class ClaimsRepository
                 nameof(ClaimsEntity.Expires),
                 QueryComparisons.LessThan,
                 DateTimeOffset.UtcNow)
-        );
+            );
         var purgeBatch = new TableBatchOperation();
         var purgeCount = 0;
         void purgeClaims(ClaimsEntity entity) =>

@@ -51,7 +51,8 @@
         console.log('E.g: let client = await CreateClient();');
 
         async function GetJWTFromDeveloperAuthorizer(userName) {
-            let jwt = await fetch('https://localhost:7022/api/DevJWT/' + (userName || 'DevMan123')).then(r => r.text());
+            userName ||= 'DevMan123';
+            let jwt = await fetch('https://localhost:7022/api/DevJWT/' + userName).then(r => r.text());
             return jwt;
         };
 
@@ -63,13 +64,14 @@
         async function CreateClient(userName) {
             var client = new JWTClient('https://localhost:7060');
             if (!await client.login()) {
+                userName ||= 'DevMan123';
                 console.log('Fetching new JWT from Developer authorizer using username ' + userName);
                 let jwt = await GetJWTFromDeveloperAuthorizer(userName);
                 await client.login(jwt);
             }
             console.log('Sucess! Your client is ready');
             if (userName && userName != client.claims.unique_name)
-                console.log('Warning: The session username does not match the requested username.');
+                console.warn('Warning: The session username does not match the requested username.');
 
             return client;
         }
