@@ -14,10 +14,7 @@ namespace AzureAuth.ReferenceAPI.Controllers
         public AuthorizedController(JWTManager jwtManager) => this.jwtManager = jwtManager;
 
         [HttpGet, Authorize]
-        public string? Get()
-        {
-            return HttpContext.User.Identity?.Name;
-        }
+        public string? Get() => HttpContext.User.Identity?.Name;
 
         [HttpPost, Authorize]
         public string? Post()

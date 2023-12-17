@@ -1,8 +1,11 @@
 Most projects in this solution are configured to use
 a self-signed certificate for debugging over https.
 
+The launch parameter --useDefaultCert is unfortunately not working for function apps.
+
 Run the script "GenerateCertificate.ps1" AS ADMINISTRATOR to
-generate such a certificate.
+generate such a certificate. 
+(Note: the script will now elevate itself if needed.)
 
 The password of this certificate is "123456" (without quotes).
 
@@ -13,3 +16,6 @@ Do this by following the wizard started by double clicking the certificate file
 in the file explorer.
 
 Don't share the .pfx file with anyone even if they ask nicely!!!
+(You can, however, reuse the certificate for any other projects 
+you want to debug locally though! See the launch parameters how
+to point to a certificate file.)
