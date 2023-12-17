@@ -11,3 +11,5 @@ install it to the "Trusted Root Certification Authorities" store.
 
 Do this by following the wizard started by double clicking the certificate file
 in the file explorer.
+
+Don't share the .pfx file with anyone even if they ask nicely!!!
