@@ -13,7 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAuth.ReferenceAPI", "A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Certificate", "Certificate", "{82D09850-6049-4715-93E6-E992965B98F4}"
 	ProjectSection(SolutionItems) = preProject
-		__blobstorage__\1595d93c-ddc3-4f1c-8377-391fc7694991 = __blobstorage__\1595d93c-ddc3-4f1c-8377-391fc7694991
 		certificate.pfx = certificate.pfx
 		certificate.readme = certificate.readme
 		GenerateCertificate.ps1 = GenerateCertificate.ps1
