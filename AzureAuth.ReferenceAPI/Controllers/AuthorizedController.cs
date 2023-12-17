@@ -22,6 +22,8 @@ namespace AzureAuth.ReferenceAPI.Controllers
         [HttpPost, Authorize]
         public string? Post()
         {
+            // The client in index.html will check response headers and update
+            // the JWT if it finds one by a different issuer than the SessionService.
             var claims = HttpContext.User.Claims.ToList();
 
             if (!claims.Any(c => c.Type == "Status"))

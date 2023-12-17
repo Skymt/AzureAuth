@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-#nullable enable
 namespace AzureAuth.Core;
 
 public static class Extensions
@@ -62,7 +61,7 @@ public static class Extensions
             var context = contextService!.HttpContext!;
             var authHeader = context.Request.Headers.Authorization[0];
 
-            client.DefaultRequestHeaders.Authorization = new("Bearer", authHeader[7..]);
+            client.DefaultRequestHeaders.Authorization = new(JwtBearerDefaults.AuthenticationScheme, authHeader[7..]);
         });
         return services;
     }

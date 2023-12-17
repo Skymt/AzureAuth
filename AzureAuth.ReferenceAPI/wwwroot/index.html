@@ -44,10 +44,10 @@
         }
     </script>
 </head>
-<body>
+<body style="background: #314e30; color: #ffd800">
     <code>This page is useless without developer tools.</code>
     <script type="text/javascript">
-        console.log('To be honest, it is pretty useless in the developer tools too... To get anything done use the console.');
+        console.log('To be honest, it is pretty useless in the developer tools too... To get anything done use the console here.');
         console.log('E.g: let client = await CreateClient();');
 
         async function GetJWTFromDeveloperAuthorizer(userName) {
@@ -69,7 +69,7 @@
             }
             console.log('Sucess! Your client is ready');
             if (userName && userName != client.claims.unique_name)
-                console.log('Warning: The username in the JWT does not match the username requested.');
+                console.log('Warning: The session username does not match the requested username.');
 
             return client;
         }

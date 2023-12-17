@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 #Azurite db
 /__azurite_db_*.json
+/__blobstorage__/
