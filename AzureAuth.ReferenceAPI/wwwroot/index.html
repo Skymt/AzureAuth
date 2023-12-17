@@ -17,7 +17,7 @@
                 
                 return await fetch(this.#sessionServiceEndpoint + '/api/Login', fetchOptions)
                     .then(r => r.json()).then(jwt => this.#jwt = jwt.token)
-                    .then(() => true).catch(() => false)
+                    .then(() => true).catch(() => false);
             }
             async logout() {
                 await fetch(this.#sessionServiceEndpoint + '/api/Logout', { credentials: "include" });
