@@ -1,14 +1,16 @@
 # AzureAuth
-This is a experiment into authentication and authorization using JWTs and microservices designed for Azure.
+This is a experiment into authentication and authorization using [JWTs](https://jwt.io/) and microservices designed for Azure.
 
-The projects are setup to use HTTPS, so please check the "Certificate" solution folder, or the certificate.readme file for further instructions to get this solution to run.
+The projects are setup to use HTTPS, so please check the certificate.readme file for further instructions to get this solution to run.
 
 ## Session service
-The session service stores the JWT claims in a table storage. They can be retrieved using a guid. The intended audience are both automated services and normal users, the main difference being that what is using the sessions (a browser, in the case of users).
+The session service stores the JWT claims in a table storage. They can be retrieved using a guid. 
+The intended audience are both automated services and normal users.
+Service requests comes from custom clients, who send their auth id in a custom header. User requests comes from a browser, and refresh tokens are protected as httponly secure cookies. 
+The id of user sessions are changed (the claims are recycled) for every refresh, while service sessions are deleted only when their expiriation date is reached.
 
-Users therefore has a slightly more secure flow, where refresh tokens are stored in httponly secure cookies, and the id is recycled every time a session is refreshed. This means the auth id will only be transmitted twice at most.
-
-To start a session, the user must get a valid JWT from an authorizer.
+To start a session, a service must have their claims object created by an administrator and directly inserted into table storage.
+The user must get a valid JWT from an authorizer.
 
 ## Developer authorizer
 Authorizers exchange credentials for JWTs. The developer authorizer only requires a username and is of course not intended for production scenarios.
