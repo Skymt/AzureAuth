@@ -1,11 +1,11 @@
 ﻿using AzureAuth.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using System;
-using System.Security.Claims;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 namespace AzureAuth.DeveloperAuthorizer;
 
 internal class DevJWTFunction
@@ -20,7 +20,7 @@ internal class DevJWTFunction
     {
         if (string.IsNullOrEmpty(name)) return new NotFoundResult();
 
-        var claims = new Claim[] 
+        var claims = new Claim[]
         {
             new(ClaimTypes.Name, name),
             new(ClaimTypes.Role, "Developer")

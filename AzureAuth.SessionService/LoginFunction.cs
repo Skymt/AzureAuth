@@ -17,13 +17,21 @@ internal class LoginFunction
     public LoginFunction(UserAuthHandler userHandler, ServiceAuthHandler serviceHandler)
         => (this.userHandler, this.serviceHandler) = (userHandler, serviceHandler);
 
+    /// <summary>
+    /// Logs in or refreshes a user or service session. Services are required to send
+    /// their auth id in a custom header. The presence of this is used to determine 
+    /// the type of authorization flow to use.
+    /// </summary>
+    /// <param name="req">The request</param>
+    /// <param name="log">The place to put information</param>
+    /// <returns>A response</returns>
     [FunctionName("Login")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req, 
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
         ILogger log)
     {
         // Check if request is from a service or from a user
-        if(req.Headers.ContainsKey(SecurityHeaderName))
+        if (req.Headers.ContainsKey(AuthHeaderName))
         {
             log.LogInformation("Request is from a service");
             return await serviceHandler.AuthorizeService(req, log);

@@ -48,7 +48,7 @@
     <code>This page is useless without developer tools.</code>
     <script type="text/javascript">
         console.log('To be honest, it is pretty useless in the developer tools too... To get anything done use the console here.');
-        console.log('E.g: let client = await CreateClient();');
+        console.log('E.g: "let client = await CreateClient();"');
 
         async function GetJWTFromDeveloperAuthorizer(userName) {
             userName ||= 'DevMan123';
@@ -69,10 +69,11 @@
                 let jwt = await GetJWTFromDeveloperAuthorizer(userName);
                 await client.login(jwt);
             }
-            console.log('Sucess! Your client is ready');
             if (userName && userName != client.claims.unique_name)
                 console.warn('Warning: The session username does not match the requested username.');
 
+            console.log('Sucess! Your client is ready - you can now do authorized requests!"');
+            console.log('E.g. await client.fetch("/authorized").then(r => r.text());// which will echo your username.');
             return client;
         }
 

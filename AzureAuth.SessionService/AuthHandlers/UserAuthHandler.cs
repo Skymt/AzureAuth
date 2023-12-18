@@ -19,19 +19,19 @@ namespace AzureAuth.SessionService.AuthHandlers
 
         public async Task<IActionResult> AuthorizeUser(HttpRequest req, ILogger log)
         {
-            string? refreshInfo = req.Cookies[SecurityTokenName];
-            bool hasRefreshToken = Guid.TryParse(refreshInfo, out var refreshToken);
+            string? authId = req.Cookies[AuthCookieName];
+            bool hasAuthId = Guid.TryParse(authId, out var refreshToken);
 
             var (hasValidJWT, jwt) = await HasValidJWT(req);
             ClaimsEntity? userClaims = null;
 
-            if (!hasRefreshToken && hasValidJWT)
+            if (!hasAuthId && hasValidJWT)
             {
                 userClaims = defaultClaims();
                 userClaims.SetClaims(jwt!.ClaimsIdentity.Claims);
                 log.LogInformation("Created new user session.");
             }
-            else if (hasRefreshToken)
+            else if (hasAuthId)
             {
                 var retiredClaims = await claimsRepository.Get(refreshToken);
                 if (retiredClaims != null)
@@ -43,7 +43,7 @@ namespace AzureAuth.SessionService.AuthHandlers
                 userClaims = retiredClaims ?? defaultClaims();
                 if (hasValidJWT)
                 {
-                    if(userClaims.Claims == null)
+                    if (userClaims.Claims == null)
                     {
                         log.LogInformation("Revived user session {refreshToken}", refreshToken);
                     }
@@ -59,8 +59,8 @@ namespace AzureAuth.SessionService.AuthHandlers
 
             await claimsRepository.Set(userClaims);
             var newJwt = jwtManager.Generate(userClaims.Claims, userClaims.Duration, "Users");
-            req.HttpContext.Response.Headers.Authorization = "Bearer " + jwt;
-            req.HttpContext.Response.Cookies.Append(SecurityTokenName, $"{userClaims.Token}", defaultCookie());
+            
+            req.HttpContext.Response.Cookies.Append(AuthCookieName, $"{userClaims.Token}", defaultCookie());
             log.LogInformation("Authorized {refreshToken} -> {Token}", refreshToken, userClaims.Token);
             return new OkObjectResult(new { token = newJwt });
 

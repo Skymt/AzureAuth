@@ -9,14 +9,14 @@ namespace AzureAuth.Core
 {
     public class JWTManager
     {
-        public static readonly string SecurityTokenName = "AuthID";
-        public static readonly string SecurityHeaderName = $"x-{SecurityTokenName}";
+        public static readonly string AuthCookieName = "AuthID";
+        public static readonly string AuthHeaderName = $"x-{AuthCookieName}";
 
         readonly string issuer; readonly string audience;
         readonly TokenValidationParameters validationParameters;
         readonly SigningCredentials signingCredentials;
         readonly JwtSecurityTokenHandler tokenHandler;
-        
+
         public JWTManager(IConfiguration configuration)
         {
             issuer = configuration["JWT:Issuer"]!; audience = configuration["JWT:Audience"]!;
@@ -62,7 +62,7 @@ namespace AzureAuth.Core
             var issuers = configuration["JWT:ValidIssuers"]?.Split(',');
             var audiences = configuration["JWT:ValidAudiences"]?.Split(',').ToHashSet();
 
-            if(Debugger.IsAttached) audiences?.Add("Developers");
+            if (Debugger.IsAttached) audiences?.Add("Developers");
 
             return (new(key, SecurityAlgorithms.HmacSha256), new()
             {
@@ -74,7 +74,7 @@ namespace AzureAuth.Core
                 IssuerSigningKey = key,
             });
         }
-        
+
         /// <summary>
         /// Generates a new shared secret to be put in configuration.
         /// </summary>
@@ -84,7 +84,7 @@ namespace AzureAuth.Core
         {
             var randomSeed = new Span<byte>(new byte[54]); // 54 bytes * 8 / 6 = 72 base64 characters
             Random.Shared.NextBytes(randomSeed);
-            return Convert.ToBase64String(randomSeed); 
+            return Convert.ToBase64String(randomSeed);
         }
     }
 }

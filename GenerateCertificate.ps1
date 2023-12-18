@@ -9,7 +9,7 @@ if (Test-Path $file) {
 #Check if administrator.
 if ([Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544') {
 
-	#Create / overwrite certificate.
+	#Create certificate file.
 	$cert = New-SelfSignedCertificate -Subject localhost -DnsName localhost -FriendlyName "Functions Development" -KeyUsage DigitalSignature -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.1")
 	Export-PfxCertificate -Cert $cert -FilePath $file -Password (ConvertTo-SecureString -String "123456" -Force -AsPlainText)
 
@@ -29,7 +29,8 @@ if ([Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-3
 	Write-Host "You can do this in the windows Import Certificate wizard." -ForegroundColor Green
 	Write-Host
 	#Start the import wizard upon user request.
-	$press = Read-Host "Do you want start the import wizard now? (Y/N)"
+	Write-Host "Do you want start the import wizard now? (Y/N)" -ForegroundColor Yellow -NoNewline
+	$press = Read-Host
 	if ($press -eq "Y") { Start-Process -FilePath $file }
-	else { Write-Host "Double-click the certificate file in the file explorer to start the wizard at a later time." }
+	else { Write-Host "Double-click the certificate file in the file explorer to start the wizard at a later time." -ForegroundColor Green }
 }

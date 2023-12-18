@@ -17,8 +17,8 @@ namespace AzureAuth.SessionService.AuthHandlers
             => (this.claimsRepository, this.jwtManager) = (claimsRepository, jwtManager);
         public async Task<IActionResult> AuthorizeService(HttpRequest req, ILogger log)
         {
-            string? securityToken = req.Headers[SecurityHeaderName];
-            if (Guid.TryParse(securityToken, out var token))
+            string? authId = req.Headers[AuthHeaderName];
+            if (Guid.TryParse(authId, out var token))
             {
                 log.LogInformation("Service token {token}", token);
                 var credentials = await claimsRepository.Get(token);

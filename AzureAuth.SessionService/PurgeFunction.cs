@@ -14,7 +14,7 @@ internal class PurgeFunction
     }
 
     [FunctionName("Purge"), SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Function trigger parameter.")]
-    public async Task Run([TimerTrigger("55 23 * * *")]TimerInfo myTimer, ILogger log)
+    public async Task Run([TimerTrigger("55 23 * * *")] TimerInfo myTimer, ILogger log)
     {
         var purgeCount = await claimsRepository.Purge();
         log.LogInformation($"Purged {purgeCount} expired claims.");

@@ -1,8 +1,7 @@
-﻿using AzureAuth.SessionService.AuthHandlers;
-using AzureAuth.Core;
+﻿using AzureAuth.Core;
+using AzureAuth.SessionService.AuthHandlers;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.WindowsAzure.Storage;
 
 [assembly: FunctionsStartup(typeof(AzureAuth.SessionService.Startup))]
 namespace AzureAuth.SessionService;

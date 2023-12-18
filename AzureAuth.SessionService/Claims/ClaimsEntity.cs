@@ -1,10 +1,11 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using System;
+using AzureAuth.Core.ClaimsSerialization;
 
 namespace AzureAuth.SessionService;
 
@@ -22,12 +23,12 @@ namespace AzureAuth.SessionService;
 public class ClaimsEntity : ITableEntity
 {
     /// <summary>
-    /// The security / auth id of this claim set.
+    /// The auth id of this claim set.
     /// </summary>
     public Guid Token { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// Users update their security tokens every time they refresh their session,
+    /// Users update their auth id tokens every time they refresh their session,
     /// this is called recycling. Getting a recycled token from storage will
     /// delete it as well. It must be saved again with a new token if the session
     /// is to stay alive.
@@ -55,7 +56,7 @@ public class ClaimsEntity : ITableEntity
     /// motivate even longer durations.
     /// </remarks>
     public TimeSpan Duration { get; set; }
-    
+
     /// <summary>
     /// Set the claims of this claim set.
     /// </summary>
@@ -63,7 +64,7 @@ public class ClaimsEntity : ITableEntity
     /// <returns>True, if any claims in the set changed.</returns>
     public bool SetClaims(IEnumerable<Claim> claims)
     {
-        if(Claims == null)
+        if (Claims == null)
         {
             Claims = claims.ToArray();
             return true;
@@ -73,8 +74,8 @@ public class ClaimsEntity : ITableEntity
         List<Claim> result = new();
         foreach (var claim in claims)
         {
-            var oldClaim = Claims.FirstOrDefault(c => c.Type ==  claim.Type);
-            if (oldClaim != null && oldClaim.Value != claim.Value) { dirty = true; } 
+            var oldClaim = Claims.FirstOrDefault(c => c.Type == claim.Type);
+            if (oldClaim != null && oldClaim.Value != claim.Value) { dirty = true; }
             result.Add(claim);
         }
         Claims = result.ToArray();
@@ -87,7 +88,7 @@ public class ClaimsEntity : ITableEntity
     DateTimeOffset ITableEntity.Timestamp { get; set; }
     string ITableEntity.ETag { get; set; }
 
-    // The claim set is stored as a base64 encoded binary blob. Pardon the blunt serialization.
+    // The claim set is stored as a base64 encoded binary blob.
     void ITableEntity.ReadEntity(IDictionary<string, EntityProperty> properties, OperationContext operationContext)
     {
         Expires = properties[nameof(Expires)].DateTimeOffsetValue.Value;
@@ -96,31 +97,17 @@ public class ClaimsEntity : ITableEntity
         if (Expires > DateTimeOffset.Now)
         {
             Recycled = properties[nameof(Recycled)].BooleanValue.Value;
-            var base64Data = properties["Claims"].StringValue;
-            var binaryData = Convert.FromBase64String(base64Data);
-            using var sourceStream = new MemoryStream(binaryData);
-            using var serializer = new BinaryReader(sourceStream);
-            List<Claim> claims = new();
-            while (serializer.PeekChar() != -1) claims.Add(new Claim(serializer));
-            Claims = claims.ToArray();
+            Claims = properties[nameof(Claims)].StringValue.DeserializeToClaims();
         }
     }
     IDictionary<string, EntityProperty> ITableEntity.WriteEntity(OperationContext operationContext)
     {
-        using var targetStream = new MemoryStream();
-        using var serializer = new BinaryWriter(targetStream);
-        foreach (var claim in Claims) claim.WriteTo(serializer);
-        serializer.Flush();
-
-        var binaryData = targetStream.ToArray();
-        var base64Data = Convert.ToBase64String(binaryData);
-
         return new Dictionary<string, EntityProperty>
         {
+            [nameof(Claims)] = EntityProperty.GeneratePropertyForString(Claims.SerializeToBase64()),
             [nameof(Expires)] = EntityProperty.GeneratePropertyForDateTimeOffset(Expires),
             [nameof(Duration)] = EntityProperty.GeneratePropertyForDouble(Duration.TotalMilliseconds),
-            [nameof(Recycled)] = EntityProperty.GeneratePropertyForBool(Recycled),
-            [nameof(Claims)] = EntityProperty.GeneratePropertyForString(base64Data)
+            [nameof(Recycled)] = EntityProperty.GeneratePropertyForBool(Recycled)
         };
     }
 }
