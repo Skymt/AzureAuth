@@ -5,7 +5,7 @@
     <title></title>
     <script type="text/javascript">
         class JWTClient {
-            #sessionServiceEndpoint; #jwt; #sessionIssuer;
+            #sessionServiceEndpoint; #jwt;
             constructor(sessionServiceEndpoint) {
                 this.#sessionServiceEndpoint = sessionServiceEndpoint;
             }
@@ -14,10 +14,10 @@
                 let fetchOptions = { credentials: "include" };
                 if (!authJWT && this.#jwt) authJWT = this.#jwt;
                 if (authJWT) fetchOptions.headers = { Authorization: "Bearer " + authJWT }
-                
+
                 return await fetch(this.#sessionServiceEndpoint + '/api/Login', fetchOptions)
                     .then(r => r.json()).then(jwt => this.#jwt = jwt.token)
-                    .then(() => true).catch(() => false);
+                    .then(_ => true).catch(_ => false);
             }
             async logout() {
                 await fetch(this.#sessionServiceEndpoint + '/api/Logout', { credentials: "include" });
@@ -27,17 +27,17 @@
                 if (!this.authorized) throw new Error('Unauthorized');
                 if (this.claims.exp * 1000 < new Date()) await this.login();
 
-                options = options || {};
-                options.headers = options.headers || {};
+                options ||= {}; options.headers ||= {};
                 options.headers["Authorization"] = "Bearer " + this.#jwt;
-                return await fetch(endpoint, options).then(async r => {
-                    if (r.headers.has("Authorization")) {
-                        var header = r.headers.get("Authorization");
-                        this.#jwt = header.substring(7);
-                        if (this.#sessionIssuer != this.claims.iss) await this.login();
-                    }
-                    return r;
-                });
+
+                return await fetch(endpoint, options)
+                    .then(async r => {
+                        if (r.headers.has("Authorization")) {
+                            var header = r.headers.get("Authorization");
+                            await this.login(header.substring(7));
+                        }
+                        return r;
+                    });
             }
             get authorized() { return !!this.#jwt; }
             get claims() { if (this.authorized) return JSON.parse(atob(this.#jwt.split('.')[1])); }
@@ -45,10 +45,10 @@
     </script>
 </head>
 <body style="background: #314e30; color: #ffd800">
-    <code>This page is useless without developer tools.</code>
+    <code>This page is mostly for javascript. E.g. here is the documentation for the class in the &lt;head&gt; element.</code>
     <script type="text/javascript">
-        console.log('To be honest, it is pretty useless in the developer tools too... To get anything done use the console here.');
-        console.log('E.g: "let client = await CreateClient();"');
+        console.info('OMG it\'s full of functions... To get anything done use the console.');
+        console.info('E.g: "let client = await CreateClient();"');
 
         async function GetJWTFromDeveloperAuthorizer(userName) {
             userName ||= 'DevMan123';
@@ -65,18 +65,103 @@
             var client = new JWTClient('https://localhost:7060');
             if (!await client.login()) {
                 userName ||= 'DevMan123';
-                console.log('Fetching new JWT from Developer authorizer using username ' + userName);
+                console.info('Fetching new JWT from Developer authorizer using username ' + userName);
                 let jwt = await GetJWTFromDeveloperAuthorizer(userName);
                 await client.login(jwt);
             }
             if (userName && userName != client.claims.unique_name)
                 console.warn('Warning: The session username does not match the requested username.');
 
-            console.log('Sucess! Your client is ready - you can now do authorized requests!"');
-            console.log('E.g. await client.fetch("/authorized").then(r => r.text());// which will echo your username.');
+            console.info('Sucess! Your client is ready - you can now do authorized requests!"');
+            console.info('E.g. await client.fetch("/authorized").then(r => r.text());// which will echo your username.');
             return client;
         }
 
     </script>
+
+
+    <style>
+        dt:hover + dd,dd:hover { display: block; }
+        dd {
+            display: none;
+            position: fixed;
+            padding: 12px;
+            border: 1px solid #ffd800;
+            background: #314e30;
+            max-width:500px;
+        }
+    </style>
+    <div>
+        <dl style="background:black;display:inline-block;padding:14px;border: 1px solid #ffd800;">
+            <dt><code>class JWTClient {</code></dt>
+            <dd>The JWT client class manages a json web token in conjunction with a session service and exposes a .fetch() method to do authenticated requests.<br />It expects the session service to manage a httponly cookie, that can be used to refresh JWTs that have expired or been lost from memory.</dd>
+            <dt><code>&nbsp;&nbsp;#sessionServiceEndpoint; #jwt;</code></dt>
+            <dd>These are the privates of the class. The endpoint to the session service and the current JWT.</dd>
+            <dt><code>&nbsp;&nbsp;constructor(sessionServiceEndpoint) {</code></dt>
+            <dd>Constructing the class only requires the endpoint. The JWT will be filled after login.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;this.#sessionServiceEndpoint = sessionServiceEndpoint;</code></dt>
+            <dd>The session service is the main issuer of JWTs. When other requests updates the claims list, it will always be echoed to this endpoint, to make sure the most recent list can be recovered with the refresh token.</dd>
+            <dt><code>&nbsp;&nbsp;}<br />&nbsp;</code></dt>
+            <dd>Constructor end.</dd>
+            <dt><code>&nbsp;&nbsp;async login(authJWT) {</code></dt>
+            <dd>Login function - authJWT is optional. Returns true if the client is authenticated (either from refresh token, or from provided authJWT). Otherwise false.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;let fetchOptions = { credentials: "include" };</code></dt>
+            <dd>Allow credentials to be sent when logging in. This matters for the cookie - not for the Authorization header!!!</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (!authJWT && this.#jwt) authJWT = this.#jwt;</code></dt>
+            <dd>Try to send any JWT we have.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (authJWT) fetchOptions.headers = { Authorization: "Bearer " + authJWT }</code></dt>
+            <dd>If we find a JWT to add, then add it as an authorization header.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;return await fetch(this.#sessionServiceEndpoint + '/api/Login', fetchOptions)</code></dt>
+            <dd>Return the result from: Waiting on fetch then...</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(r => r.json()).then(jwt => this.#jwt = jwt.token)</code></dt>
+            <dd>parsing the result as JSON, assigning the token of the JSON object to our private field, then...</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(_ => true).catch(_ => false);</code></dt>
+            <dd>finally deciding on returning true. If anything bad happened, false is returned via .catch().</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;</code></dt>
+            <dd>End login function</dd>
+            <dt><code>&nbsp;&nbsp;async logout() {</code></dt>
+            <dd>Logout requests the claims associated with our refresh token cookie to be deleted from the storage. The response should contain an encouragment to clear that cookie from the browser.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;await fetch(this.#sessionServiceEndpoint + '/api/Logout', { credentials: "include" });</code></dt>
+            <dd>Just await the fetch, the browser itself will handling deleting the cookie.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;this.#jwt = null;</code></dt>
+            <dd>We need to clear our JWT - which has its own expiration independant of this action! <i>I.e. it is still valid and could be used to authenticate requests.</i></dd>
+            <dt><code>&nbsp;&nbsp;}<br />&nbsp;</code></dt>
+            <dd>End logout function</dd>
+            <dt><code>&nbsp;&nbsp;async fetch(endpoint, options) {</code></dt>
+            <dd>Fetch does just what the normal window.fetch does, but adds the authorization header, and checks for the same header in the response. The refresh token is not sent!</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (!this.authorized) throw new Error('Unauthorized');</code></dt>
+            <dd>We want to have a JWT to add.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (this.claims.exp * 1000 < new Date()) await this.login();</code></dt>
+            <dd>If our JWT has expired - refresh it with a call to login.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;options ||= {}; options.headers ||= {};</code></dt>
+            <dd>Options are optional, but not for us. We need to make sure we don't overwrite any existing data.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;options.headers["Authorization"] = "Bearer " + this.#jwt;</code></dt>
+            <dd>Add our authorization header.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;return await fetch(endpoint, options)</code></dt>
+            <dd>Then we can start the fetch.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(async r => {</code></dt>
+            <dd>When the response comes, we want to check for updated authorization...</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (r.headers.has("Authorization")) {</code></dt>
+            <dd>by inspecting the response object.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var header = r.headers.get("Authorization");</code></dt>
+            <dd>If we find an Authorization header, </dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;await this.login(header.substring(7));</code></dt>
+            <dd>we re-auth using the new token data. (Get the data by removing the leading "Bearer " of the header value, which is part of the authentication schema).</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</code></dt>
+            <dd>End header handling.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return r;</code></dt>
+            <dd>Pass on the response</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;});</code></dt>
+            <dd>End request declaration</dd>
+            <dt><code>&nbsp;&nbsp;}<br />&nbsp;</code></dt>
+            <dd>End fetch function</dd>
+            <dt><code>&nbsp;&nbsp;get authorized() { return !!this.#jwt; }</code></dt>
+            <dd>Property that returns true if the client has a JWT, otherwise false.</dd>
+            <dt><code>&nbsp;&nbsp;get claims() { if (this.authorized) return JSON.parse(atob(this.#jwt.split('.')[1])); }</code></dt>
+            <dd>Property that returns the claims of the current JWT. It does so by parsing the middle part of the JWT as JSON, after deserializing it as a base64 string using the windod.atob() (ascii to binary) function.</dd>
+            <dt><code>}</code></dt>
+            <dd>End JWTClient</dd>
+        </dl>
+    </div>
 </body>
 </html>

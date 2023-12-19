@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 
 namespace AzureAuth.Core.ClaimsSerialization;
-public static class ClaimsExtensions
+public static class ClaimsSerializationExtensions
 {
     public static string SerializeToBase64(this IEnumerable<Claim> claims)
     {
