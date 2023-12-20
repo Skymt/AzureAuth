@@ -25,8 +25,8 @@ if ([Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-3
 		Write-Host "The certificate has been added to the Trusted Root Certification Authorities store." -ForegroundColor Green
 	}
 
-	Write-Host "Kestrel, the net core web server, requires the certificate to be exported to a pfx file" -ForegroundColor Yellow
-    Write-Host "since it is multiplatform and won't read from windows cert store. Do this export now? (Y/N) " -ForegroundColor Yellow -NoNewline
+	Write-Host "Function apps requires the certificate to be exported to a pfx file." -ForegroundColor Yellow
+    Write-Host "This file is then referenced in launchSettings.json. Do this export now? (Y/N) " -ForegroundColor Yellow -NoNewline
 	$answer = Read-Host
 
 	if ($answer -eq "Y") { 
