@@ -2,26 +2,25 @@ Most projects in this solution are configured to use
 a self-signed certificate for debugging over https.
 
 The launch parameter --useDefaultCert is unfortunately 
-not working for function apps.
+not working for kestrel hosted apps.
 
 Instead, run the script "GenerateCertificate.ps1" in 
-the solution folder. 
-(Note: The script needs administrator priviledges to
- be able to generate the certificate, but the script 
- will elevate itself if needed).
+the solution folder.
 
-The password of this certificate is "123456" 
-(without quotes).
+1. Open a PowerShell prompt as administrator
+2. Immidiatly restart powershell without pesky execution policies:
+   "PowerShell -ExecutionPolicy Bypass"
+3. Navigate to the solution folder
+   "cd <path to solution folder>"
+4. Run the script
+   ".\GenerateCertificate.ps1"
 
-To make your browser, and other applications, trust
-the certificate, install it to the "Trusted Root 
-Certification Authorities" store.
-
-Do this by following the wizard started by double 
-clicking the certificate.pfx file in the file explorer.
+This will generate a self-signed certificate and install
+it in the certificate store, as well as exporting
+it to a .pfx file in the solution folder.
 
 DON'T SHARE THE .PFX FILE WITH ANYONE EVEN IF THEY ASK NICELY!!!
 
-(You can, however, reuse the certificate for any other projects 
-you want to debug locally though! See the launch parameters how
-to point to a certificate file).
+(You can, however, reuse the certificate for any other function
+projects you want to debug locally though! See the launch 
+parameters how to point to a certificate file).
