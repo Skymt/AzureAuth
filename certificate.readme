@@ -1,26 +1,35 @@
 Most projects in this solution are configured to use
 a self-signed certificate for debugging over https.
 
-The launch parameter --useDefaultCert is unfortunately 
+The launch parameter --useDefaultCert is unfortunately
 not working for kestrel hosted apps.
 
-Instead, run the script "GenerateCertificate.ps1" in 
-the solution folder.
+If you do not already have a certificate, you can
+follow this guide to generate one.
 
-1. Open a PowerShell prompt as administrator
-2. Immidiatly restart powershell without pesky execution policies:
-   "PowerShell -ExecutionPolicy Bypass"
-3. Navigate to the solution folder
-   "cd <path to solution folder>"
-4. Run the script
-   ".\GenerateCertificate.ps1"
+1. Open a PowerShell prompt as administrator and navigate to solution folder
+> cd [path to]\AzureAuth
 
-This will generate a self-signed certificate and install
-it in the certificate store, as well as exporting
-it to a .pfx file in the solution folder.
+2. Optional: Start certmgr, Certificate Manager - the generated certificates can be found in this windows app
+> Start-Process certmgr
+
+3. Generate the certificate - it will be placed in certmgr -> Personal -> Certificates, with the name "Functions Development"
+> $cert = New-SelfSignedCertificate -Subject localhost -DnsName localhost -FriendlyName "Functions Development" -CertStoreLocation "Cert:\CurrentUser\My" -KeyUsage DigitalSignature -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.1")
+
+4. Move it to trusted root - this will allow your browser and such to use the certificate
+> Move-Item -Path $cert.PSPath -Destination "Cert:\CurrentUser\Root"
+
+5. Export it as .pfx file, to allow function apps to find and use the certificate
+> Export-PfxCertificate -Cert $cert -FilePath $file -Password (ConvertTo-SecureString -String "123456" -Force -AsPlainText)
+
+The exported file will have the password "123456",
+which is the same as the launchSettings for the
+function apps SessionService and DeveloperAuthorizer.
+
+If you change the password - remember to update the references!
 
 DON'T SHARE THE .PFX FILE WITH ANYONE EVEN IF THEY ASK NICELY!!!
 
 (You can, however, reuse the certificate for any other function
-projects you want to debug locally though! See the launch 
+projects you want to debug locally though! See the launch
 parameters how to point to a certificate file).

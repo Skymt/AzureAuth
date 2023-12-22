@@ -158,7 +158,7 @@
             <dt><code>&nbsp;&nbsp;get authorized() { return !!this.#jwt; }</code></dt>
             <dd>Property that returns true if the client has a JWT, otherwise false.</dd>
             <dt><code>&nbsp;&nbsp;get claims() { if (this.authorized) return JSON.parse(atob(this.#jwt.split('.')[1])); }</code></dt>
-            <dd>Property that returns the claims of the current JWT. It does so by parsing the middle part of the JWT as JSON, after deserializing it as a base64 string using the windod.atob() (ascii to binary) function.</dd>
+            <dd>Property that returns the claims of the current JWT. It does so by parsing the middle part of the JWT as JSON, after deserializing it as a base64 string using the window.atob() (ascii to binary) function.</dd>
             <dt><code>}</code></dt>
             <dd>End JWTClient</dd>
         </dl>

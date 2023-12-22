@@ -15,7 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Certificate", "Certificate"
 	ProjectSection(SolutionItems) = preProject
 		certificate.pfx = certificate.pfx
 		certificate.readme = certificate.readme
-		GenerateCertificate.ps1 = GenerateCertificate.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5FC2C697-BE5E-44DF-8A60-3DE60270DBAF}"
