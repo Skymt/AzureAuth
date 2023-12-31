@@ -77,7 +77,7 @@
             return client;
         }
 
-        async function drawACloud(client, h = .8) {
+        async function drawACloud(client, roughness = .8) {
             let magnitude = 10, size = Math.pow(2, magnitude) + 1;
             if (!drawACloud.pixels) {
                 document.body.append(document.createElement("canvas"));
@@ -87,9 +87,9 @@
                 drawACloud.pixels = drawACloud.context.createImageData(size, size);
             }
             let [red, green, blue] = await Promise.all([
-                client.fetch("/diamondSquare/" + magnitude + '?h=' + h).then(r => r.json()),
-                client.fetch("/diamondSquare/" + magnitude + '?h=' + h).then(r => r.json()),
-                client.fetch("/diamondSquare/" + magnitude + '?h=' + h).then(r => r.json())
+                client.fetch("/diamondSquare/" + magnitude + '?roughness=' + roughness).then(r => r.json()),
+                client.fetch("/diamondSquare/" + magnitude + '?roughness=' + roughness).then(r => r.json()),
+                client.fetch("/diamondSquare/" + magnitude + '?roughness=' + roughness).then(r => r.json())
             ]);
             const opaque = 255;
             for (var i = 0; i < size * size; i++) {
