@@ -26,6 +26,7 @@ namespace AzureAuth.ReferenceAPI.Controllers
             if (!claims.Any(c => c.Type == "Status"))
             {
                 claims.Add(new Claim("Status", "This guy gets around!"));
+                claims.Add(new Claim(ClaimTypes.Role, "AlgorithmEvaluator"));
                 var newJWT = jwtManager.Generate(claims, TimeSpan.FromMinutes(15));
                 HttpContext.Response.Headers.Authorization = "Bearer " + newJWT;
             }

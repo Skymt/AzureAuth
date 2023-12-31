@@ -48,25 +48,25 @@
     <code>This page is mostly for javascript. E.g. here is the documentation for the class in the &lt;head&gt; element.</code>
     <script type="text/javascript">
         console.info('OMG it\'s full of functions... To get anything done use the console.');
-        console.info('E.g: "let client = await CreateClient();"');
+        console.info('E.g: "let client = await createClient();"');
 
-        async function GetJWTFromDeveloperAuthorizer(userName) {
+        async function getJWTFromDeveloperAuthorizer(userName) {
             userName ||= 'DevMan123';
             let jwt = await fetch('https://localhost:7022/api/DevJWT/' + userName).then(r => r.text());
             return jwt;
         };
 
-        async function SendJWTToSessionService(jwt) {
+        async function sendJWTToSessionService(jwt) {
             let session = await fetch('https://localhost:7060/api/Login', { credentials: "include", headers: { Authorization: "Bearer " + jwt } }).then(r => r.json());
             return session;
         };
 
-        async function CreateClient(userName) {
+        async function createClient(userName) {
             var client = new JWTClient('https://localhost:7060');
             if (!await client.login()) {
                 userName ||= 'DevMan123';
                 console.info('Fetching new JWT from Developer authorizer using username ' + userName);
-                let jwt = await GetJWTFromDeveloperAuthorizer(userName);
+                let jwt = await getJWTFromDeveloperAuthorizer(userName);
                 await client.login(jwt);
             }
             if (userName && userName != client.claims.unique_name)
@@ -75,6 +75,31 @@
             console.info('Sucess! Your client is ready - you can now do authorized requests!"');
             console.info('E.g. await client.fetch("/authorized").then(r => r.text());// which will echo your username.');
             return client;
+        }
+
+        async function drawACloud(client, h = .8) {
+            let magnitude = 10, size = Math.pow(2, magnitude) + 1;
+            if (!drawACloud.pixels) {
+                document.body.append(document.createElement("canvas"));
+                var canvas = document.getElementsByTagName("canvas")[0];
+                canvas.width = canvas.height = size;
+                drawACloud.context = canvas.getContext("2d");
+                drawACloud.pixels = drawACloud.context.createImageData(size, size);
+            }
+            let [red, green, blue] = await Promise.all([
+                client.fetch("/diamondSquare/" + magnitude + '?h=' + h).then(r => r.json()),
+                client.fetch("/diamondSquare/" + magnitude + '?h=' + h).then(r => r.json()),
+                client.fetch("/diamondSquare/" + magnitude + '?h=' + h).then(r => r.json())
+            ]);
+            const opaque = 255;
+            for (var i = 0; i < size * size; i++) {
+                var idx = i * 4;
+                drawACloud.pixels.data[idx + 0] = (red[i] + 1) * 127; // -1 to 1 => 0 to 254
+                drawACloud.pixels.data[idx + 1] = (green[i] + 1) * 127;
+                drawACloud.pixels.data[idx + 2] = (blue[i] + 1) * 127;
+                drawACloud.pixels.data[idx + 3] = opaque;
+            }
+            drawACloud.context.putImageData(drawACloud.pixels, 0, 0);
         }
 
     </script>
