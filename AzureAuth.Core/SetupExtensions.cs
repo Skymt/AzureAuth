@@ -16,10 +16,9 @@ public static class Extensions
     /// <returns>The updated service collection.</returns>
     public static IServiceCollection AddJWTAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var (_, validationParameters) = JWTManager.ReadJWTConfiguration(configuration);
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options => options.TokenValidationParameters = validationParameters!);
+            .AddJwtBearer(options => options.TokenValidationParameters = JWTManager.GetValidationParameters(configuration)!);
 
         return services;
     }

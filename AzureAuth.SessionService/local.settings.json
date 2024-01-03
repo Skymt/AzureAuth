@@ -11,7 +11,7 @@
     "JWT:Secret": "USE KEYVAULT!V8wgKZ9YkHNd/tdUa0FreJTegYlaozQkslrBhN1jugK0j+eqlSCSz8TFg4XxFN45/mj7fvAI",
     "JWT:Issuer": "Core Session Auth",
     "JWT:Audience": "Users",
-    "JWT:ValidAudiences": "Users,Services",
+    "JWT:ValidAudiences": "Users,Services,Developers",
     "JWT:ValidIssuers": "Developer Authorizer,Core Reference API"
   }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -16,11 +15,21 @@ namespace AzureAuth.Core
         readonly TokenValidationParameters validationParameters;
         readonly SigningCredentials signingCredentials;
         readonly JwtSecurityTokenHandler tokenHandler;
+        readonly EncryptingCredentials? encryptingCredentials;
 
         public JWTManager(IConfiguration configuration)
         {
+            validationParameters = GetValidationParameters(configuration);
+            signingCredentials = new SigningCredentials(
+                validationParameters.IssuerSigningKey, 
+                SecurityAlgorithms.HmacSha256);
+            if (validationParameters.TokenDecryptionKey != null)
+                encryptingCredentials = new(
+                    validationParameters.TokenDecryptionKey, 
+                    SecurityAlgorithms.Aes128KW, 
+                    SecurityAlgorithms.Aes128CbcHmacSha256);
+            
             issuer = configuration["JWT:Issuer"]!; audience = configuration["JWT:Audience"]!;
-            (signingCredentials, validationParameters) = ReadJWTConfiguration(configuration);
             tokenHandler = new();
         }
 
@@ -40,31 +49,25 @@ namespace AzureAuth.Core
                 Expires = DateTime.UtcNow.Add(duration),
                 Audience = currentAudience,
                 Issuer = issuer,
-                SigningCredentials = signingCredentials
+                SigningCredentials = signingCredentials,
             };
+            if(encryptingCredentials != null)
+                tokenDescription.EncryptingCredentials = encryptingCredentials;
+
             var token = tokenHandler.CreateToken(tokenDescription);
             return tokenHandler.WriteToken(token);
 
             bool claimIsNotCurrentAudience(Claim c) => !(c.Type == "aud" && c.Value == currentAudience);
         }
 
-        /// <summary>
-        /// Reads JWT configuration from the provided configuration, and construct
-        /// a signing key and sensible parameters for JWT validation.
-        /// </summary>
-        /// <param name="configuration">The configuration container</param>
-        /// <returns>A tuple of the signing key and sensible parameters for JWT validation</returns>
-        /// <remarks>If a debugger is attached to the process running this function,
-        /// the audience "Developers" will automatically be allowed.</remarks>
-        public static (SigningCredentials, TokenValidationParameters) ReadJWTConfiguration(IConfiguration configuration)
+        public static TokenValidationParameters GetValidationParameters(IConfiguration configuration)
         {
             SymmetricSecurityKey key = new(Encoding.ASCII.GetBytes(configuration["JWT:Secret"]));
             var issuers = configuration["JWT:ValidIssuers"]?.Split(',');
             var audiences = configuration["JWT:ValidAudiences"]?.Split(',').ToHashSet();
+            var encrypted = configuration.GetValue("JWT:EncryptClaims", false);
 
-            if (Debugger.IsAttached) audiences?.Add("Developers");
-
-            return (new(key, SecurityAlgorithms.HmacSha256), new()
+            var parameters = new TokenValidationParameters
             {
                 ValidateLifetime = true,
                 ValidateIssuer = issuers != null,
@@ -72,7 +75,14 @@ namespace AzureAuth.Core
                 ValidateAudience = audiences != null,
                 ValidAudiences = audiences,
                 IssuerSigningKey = key,
-            });
+            };
+            if (encrypted)
+            {
+                SymmetricSecurityKey encryptionKey = new(Encoding.ASCII.GetBytes(configuration["JWT:Secret"][..16]));
+                parameters.TokenDecryptionKey = encryptionKey;
+            }
+
+            return parameters;
         }
 
         /// <summary>
