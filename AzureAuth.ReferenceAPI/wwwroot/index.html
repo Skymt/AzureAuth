@@ -43,8 +43,7 @@
             set #jwt(jwt) {
                 this.#token = jwt.token;
                 if (this.#refresh) clearTimeout(this.#refresh);
-                this.#refresh = setTimeout(async _ => await this.login(),
-                    (this.claims.exp - 30) * 1000 - new Date());
+                this.#refresh = setTimeout(async _ => await this.login(), jwt.refreshAt);
             }
         }
     </script>
@@ -185,17 +184,15 @@
             <dt><code>&nbsp;&nbsp;get authorized() { return !!this.#token; }</code></dt>
             <dd>Property that returns true if the client has a JWT, otherwise false.</dd>
             <dt><code>&nbsp;&nbsp;get claims() { if (this.authorized) return JSON.parse(atob(this.#token.split('.')[1])); }</code></dt>
-            <dd>Property that returns the claims of the current JWT. It does so by parsing the middle part of the JWT as JSON, after deserializing it as a base64 string using the window.atob() (ascii to binary) function.</dd>
+            <dd>Property that returns the claims of the current JWT, unless it is encrypted. It does so by parsing the middle part of the JWT as JSON, after deserializing it as a base64 string using the window.atob() (ascii to binary) function.</dd>
             <dt><code>&nbsp;&nbsp;set #jwt(jwt) {</code></dt>
             <dd>Property that assigns token data and handles refresh.</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;this.#token = jwt.token;</code></dt>
             <dd>Store the new token data.</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (this.#refresh) clearTimeout(this.#refresh);</code></dt>
             <dd>Clear the old #refresh timer (if it exists) and then set it to...</dd>
-            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;this.#refresh = setTimeout(async _ => await this.login(),</code></dt>
-            <dd>a new delay that will call login.</dd>
-            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(this.claims.exp - 30) * 1000 - new Date());</code></dt>
-            <dd>Use the current date to calculate the milliseconds remaining until 30 seconds before expiry.</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;this.#refresh = setTimeout(async _ => await this.login(), jwt.refreshAt);</code></dt>
+            <dd>a new call to login after the suggested time.</dd>
             <dt><code>&nbsp;&nbsp;}</code></dt>
             <dd>End jwt property</dd>
             <dt><code>}</code></dt>

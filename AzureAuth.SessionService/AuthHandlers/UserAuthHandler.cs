@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using static AzureAuth.Core.JWTManager;
+
 #nullable enable
 namespace AzureAuth.SessionService.AuthHandlers
 {
@@ -62,7 +63,11 @@ namespace AzureAuth.SessionService.AuthHandlers
             
             req.HttpContext.Response.Cookies.Append(AuthCookieName, $"{userClaims.Token}", defaultCookie());
             log.LogInformation("Authorized {refreshToken} -> {Token}", refreshToken, userClaims.Token);
-            return new OkObjectResult(new { token = newJwt });
+            return new OkObjectResult(new 
+            { 
+                token = newJwt, 
+                refreshAt = (userClaims.Duration - TimeSpan.FromSeconds(30)).TotalMilliseconds 
+            });
 
             CookieOptions defaultCookie() => new() { Expires = DateTimeOffset.Now.AddDays(7), HttpOnly = true, Secure = true, Path = req.Host.ToString() };
             static ClaimsEntity defaultClaims() => new() { Expires = DateTimeOffset.Now.AddDays(7), Duration = TimeSpan.FromMinutes(15), Recycled = true };
