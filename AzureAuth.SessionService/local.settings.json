@@ -12,6 +12,6 @@
     "JWT:Issuer": "Core Session Auth",
     "JWT:Audience": "Users",
     "JWT:ValidAudiences": "Users,Services",
-    "JWT:ValidIssuers": "Core Session Auth,Developer Authorizer,Core Reference API"
+    "JWT:ValidIssuers": "Developer Authorizer,Core Reference API"
   }
 }

@@ -12,7 +12,6 @@
 
             async login(authJWT) {
                 let fetchOptions = { credentials: "include" };
-                if (!authJWT && this.#token) authJWT = this.#token;
                 if (authJWT) fetchOptions.headers = { Authorization: "Bearer " + authJWT }
 
                 return await fetch(this.#sessionService + '/api/Login', fetchOptions)
@@ -67,11 +66,13 @@
 
         async function createClient(userName) {
             var client = new JWTClient('https://localhost:7060');
+            console.info('Attempting login using refresh token.')
             if (!await client.login()) {
                 userName ||= 'DevMan123';
-                console.info('Fetching new JWT from Developer authorizer using username ' + userName);
+                console.info('Woops! Fetching new JWT from Developer authorizer using username ' + userName);
                 let jwt = await getJWTFromDeveloperAuthorizer(userName);
                 await client.login(jwt);
+                delete jwt;
             }
             if (userName && userName != client.claims.unique_name)
                 console.warn('Warning: The session username does not match the requested username.');
@@ -135,8 +136,6 @@
             <dd>Login function - authJWT is optional. Returns true if the client is authenticated (either from refresh token, or from provided authJWT). Otherwise false.</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;let fetchOptions = { credentials: "include" };</code></dt>
             <dd>Allow credentials to be sent when logging in. This matters for the cookie - not for the Authorization header!!!</dd>
-            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (!authJWT && this.#token) authJWT = this.#token;</code></dt>
-            <dd>Use the old JWT if we have one and no new one is provided.</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (authJWT) fetchOptions.headers = { Authorization: "Bearer " + authJWT }</code></dt>
             <dd>If we have a JWT to add, then add it as an authorization header.</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;return await fetch(this.#sessionService + '/api/Login', fetchOptions)</code></dt>
