@@ -75,8 +75,13 @@
                 delete jwt;
             }
 
-            if (userName && userName != client.claims.unique_name)
-                console.warn('Warning: The session username does not match the requested username.');
+            try {
+                if (userName && userName != client.claims.unique_name)
+                    console.warn('Warning: The session username does not match the requested username.');
+            } catch (ex) {
+                if(userName)
+                    console.info("Unable to verify that your requested username matches your session username, due to the claims being encrypted.")
+            }
 
             console.info('Sucess! Your client is ready - you can now do authorized requests!"');
             console.info('E.g. await client.fetch("/authorized").then(r => r.text());// which will echo your username.');
