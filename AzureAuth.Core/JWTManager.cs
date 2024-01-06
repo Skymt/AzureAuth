@@ -21,14 +21,14 @@ namespace AzureAuth.Core
         {
             validationParameters = GetValidationParameters(configuration);
             signingCredentials = new SigningCredentials(
-                validationParameters.IssuerSigningKey, 
+                validationParameters.IssuerSigningKey,
                 SecurityAlgorithms.HmacSha256);
             if (validationParameters.TokenDecryptionKey != null)
                 encryptingCredentials = new(
-                    validationParameters.TokenDecryptionKey, 
-                    SecurityAlgorithms.Aes128KW, 
+                    validationParameters.TokenDecryptionKey,
+                    SecurityAlgorithms.Aes128KW,
                     SecurityAlgorithms.Aes128CbcHmacSha256);
-            
+
             issuer = configuration["JWT:Issuer"]!; audience = configuration["JWT:Audience"]!;
             tokenHandler = new();
         }
@@ -51,7 +51,7 @@ namespace AzureAuth.Core
                 Issuer = issuer,
                 SigningCredentials = signingCredentials,
             };
-            if(encryptingCredentials != null)
+            if (encryptingCredentials != null)
                 tokenDescription.EncryptingCredentials = encryptingCredentials;
 
             var token = tokenHandler.CreateToken(tokenDescription);

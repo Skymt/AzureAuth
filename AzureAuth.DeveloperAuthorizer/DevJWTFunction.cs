@@ -25,7 +25,7 @@ internal class DevJWTFunction
             new(ClaimTypes.Name, name),
             new(ClaimTypes.Role, "Developer")
         };
-        return new OkObjectResult(jwtManager.Generate(claims, TimeSpan.FromMinutes(60)));
+        return new OkObjectResult(jwtManager.Generate(claims, TimeSpan.FromSeconds(30)));
     }
 
 }

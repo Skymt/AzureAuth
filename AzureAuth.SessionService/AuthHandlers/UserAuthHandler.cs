@@ -60,13 +60,13 @@ namespace AzureAuth.SessionService.AuthHandlers
 
             await claimsRepository.Set(userClaims);
             var newJwt = jwtManager.Generate(userClaims.Claims, userClaims.Duration, "Users");
-            
+
             req.HttpContext.Response.Cookies.Append(AuthCookieName, $"{userClaims.Token}", defaultCookie());
             log.LogInformation("Authorized {refreshToken} -> {Token}", refreshToken, userClaims.Token);
-            return new OkObjectResult(new 
-            { 
-                token = newJwt, 
-                refreshAt = (userClaims.Duration - TimeSpan.FromSeconds(30)).TotalMilliseconds 
+            return new OkObjectResult(new
+            {
+                token = newJwt,
+                refreshAt = (userClaims.Duration - TimeSpan.FromSeconds(30)).TotalMilliseconds
             });
 
             // The cookie path is set to the host name, so that the cookie is only sent to this host.

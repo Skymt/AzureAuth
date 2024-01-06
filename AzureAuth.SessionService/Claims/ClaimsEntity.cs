@@ -1,11 +1,10 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using AzureAuth.Core.ClaimsSerialization;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using AzureAuth.Core.ClaimsSerialization;
 
 namespace AzureAuth.SessionService;
 
