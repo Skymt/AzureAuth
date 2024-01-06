@@ -12,6 +12,7 @@
     "JWT:Issuer": "Core Session Auth",
     "JWT:Audience": "Users",
     "JWT:ValidAudiences": "Users,Services,Developers",
-    "JWT:ValidIssuers": "Developer Authorizer,Core Reference API"
+    "JWT:ValidIssuers": "Developer Authorizer,Core Reference API",
+    "JWT:EncryptClaims": "False" // Set to True if your claims contain PII - note: this will cause the property "claims" of the JWTClient in the Core Reference API to be crash!
   }
 }

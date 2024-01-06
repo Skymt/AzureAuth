@@ -1,6 +1,7 @@
 ﻿using AzureAuth.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Specialized;
 using System.Security.Claims;
 
 namespace AzureAuth.ReferenceAPI.Controllers;
@@ -16,7 +17,14 @@ public class AuthorizedController : ControllerBase
     public string? Get() => HttpContext.User.Identity?.Name;
 
     [HttpPost, Authorize]
-    public string? Post()
+    public object[] Post()
+    {
+        var claims = HttpContext.User.Claims.ToList();
+        return claims.Select(c => new { c.Type, c.Value }).ToArray();
+    }
+
+    [HttpPatch, Authorize]
+    public string? Patch()
     {
         // The client in index.html will check response headers and update
         // the JWT if it finds one by a different issuer than the SessionService.

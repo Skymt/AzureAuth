@@ -48,9 +48,9 @@
     </script>
 </head>
 <body style="background: #314e30; color: #ffd800">
-    <code>This page is mostly for javascript. E.g. here is the documentation for the class in the &lt;head&gt; element.</code>
+    <code>This page is mostly for javascript, and the console in developer tools. I did some documentation for the class in the &lt;head&gt; element though.</code>
     <script type="text/javascript">
-        console.info('OMG it\'s full of functions... To get anything done use the console.');
+        console.info('OMG it\'s full of functions... To get anything done you should have a valid JWT. The easiest way is use an instance of the provided JWTClient.');
         console.info('E.g: "let client = await createClient();"');
 
         async function getJWTFromDeveloperAuthorizer(userName) {
@@ -74,6 +74,7 @@
                 await client.login(jwt);
                 delete jwt;
             }
+
             if (userName && userName != client.claims.unique_name)
                 console.warn('Warning: The session username does not match the requested username.');
 
