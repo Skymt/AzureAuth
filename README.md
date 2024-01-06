@@ -14,7 +14,7 @@ Services send a custom http header containing the AuthID, and the reply is a val
 User requests comes from a browser and measures must be taken to protect the data against xss.
 The auth id is therefore protected as a httponly secure cookie, and it changes every time the JWT is refreshed.
 
-The included sample JS client uses [private fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_Classes#private_fields) to store the JWT. Even so, the session service does not accept itself as an authorizer, so a leaked JWT cannot be used to create a new session.)
+The included sample JS client uses [private fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_Classes#private_fields) to store the JWT. Even so, the session service does not accept itself as an authorizer, so a leaked JWT cannot be used to create a new session.
 
 The default lifetime of a refresh token is 7 days, and the default lifetime of a JWT is 15 minutes. 
 

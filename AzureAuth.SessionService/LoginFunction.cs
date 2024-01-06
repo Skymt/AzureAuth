@@ -27,7 +27,7 @@ internal class LoginFunction
     /// <returns>A response</returns>
     [FunctionName("Login")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Function, "patch", Route = null)] HttpRequest req,
         ILogger log)
     {
         // Check if request is from a service or from a user

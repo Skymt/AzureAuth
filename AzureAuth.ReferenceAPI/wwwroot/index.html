@@ -11,7 +11,7 @@
             }
 
             async login(authJWT) {
-                let fetchOptions = { credentials: "include" };
+                let fetchOptions = { credentials: "include", method: "PATCH" };
                 if (authJWT) fetchOptions.headers = { Authorization: "Bearer " + authJWT }
 
                 return await fetch(this.#sessionService + '/api/Login', fetchOptions)
@@ -60,7 +60,7 @@
         };
 
         async function sendJWTToSessionService(jwt) {
-            let session = await fetch('https://localhost:7060/api/Login', { credentials: "include", headers: { Authorization: "Bearer " + jwt } }).then(r => r.json());
+            let session = await fetch('https://localhost:7060/api/Login', { credentials: "include", method: "PATCH", headers: { Authorization: "Bearer " + jwt } }).then(r => r.json());
             return session;
         };
 
@@ -134,12 +134,12 @@
             <dd>Constructor end.</dd>
             <dt><code>&nbsp;&nbsp;async login(authJWT) {</code></dt>
             <dd>Login function - authJWT is optional. Returns true if the client is authenticated (either from refresh token, or from provided authJWT). Otherwise false.</dd>
-            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;let fetchOptions = { credentials: "include" };</code></dt>
-            <dd>Allow credentials to be sent when logging in. This matters for the cookie - not for the Authorization header!!!</dd>
+            <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;let fetchOptions = { method: "PATCH", credentials: "include" };</code></dt>
+            <dd>Send as PATCH (GET is not routed, as that would allow browsers to render the json response as an html page). Also allow credentials to be sent when logging in. This matters for the cookie - not for the Authorization header!!!</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;if (authJWT) fetchOptions.headers = { Authorization: "Bearer " + authJWT }</code></dt>
             <dd>If we have a JWT to add, then add it as an authorization header.</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;return await fetch(this.#sessionService + '/api/Login', fetchOptions)</code></dt>
-            <dd>Return the result from: Waiting on fetch then...</dd>
+            <dd>Return the result from: First waiting on fetch then...</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(r => r.json()).then(jwt => this.#jwt = jwt)</code></dt>
             <dd>parsing the result as JSON, assigning the token of the JSON object to our private property (it also sets up refresh before token expires), before...</dd>
             <dt><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(_ => true).catch(_ => false);</code></dt>
