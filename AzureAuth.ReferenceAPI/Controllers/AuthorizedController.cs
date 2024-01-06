@@ -34,8 +34,7 @@ public class AuthorizedController : ControllerBase
         // (The claim "aud", audience, is set when the JWT is generated,
         // and will not be included in the response.)
 
-        var newJWT = jwtManager.Generate(claims, TimeSpan.FromMinutes(15));
-        HttpContext.Response.Headers.Authorization = "Bearer " + newJWT;
+        jwtManager.Generate(claims, TimeSpan.FromMinutes(5), response: HttpContext.Response);
         return claims.Select(c => new { c.Type, c.Value }).ToArray();
     }
 }

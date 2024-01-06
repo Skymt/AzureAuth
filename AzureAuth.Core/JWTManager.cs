@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -33,9 +34,23 @@ namespace AzureAuth.Core
             tokenHandler = new();
         }
 
+        /// <summary>
+        /// Validates a JWT.
+        /// </summary>
+        /// <param name="token">The JWT to validate.</param>
+        /// <returns>A task that resolves to a <see cref="TokenValidationResult"/></returns>
         public Task<TokenValidationResult> Validate(string token)
             => tokenHandler.ValidateTokenAsync(token, validationParameters);
-        public string Generate(IEnumerable<Claim> claims, TimeSpan duration, string? audience = null)
+
+        /// <summary>
+        /// Generates a new JWT with the provided claims.
+        /// </summary>
+        /// <param name="claims">The claims of the JWT.</param>
+        /// <param name="duration">The duration of the JWT lifespan.</param>
+        /// <param name="audience">The audience, if different from settings.</param>
+        /// <param name="response">The http response will get an authorization header if provided.</param>
+        /// <returns></returns>
+        public string Generate(IEnumerable<Claim> claims, TimeSpan duration, string? audience = null, HttpResponse? response = null)
         {
             var currentAudience = audience ?? this.audience;
             var cleanClaims = claims
@@ -51,12 +66,16 @@ namespace AzureAuth.Core
                 Issuer = issuer,
                 SigningCredentials = signingCredentials,
             };
+
             if (encryptingCredentials != null)
                 tokenDescription.EncryptingCredentials = encryptingCredentials;
 
-            var token = tokenHandler.CreateToken(tokenDescription);
-            return tokenHandler.WriteToken(token);
+            var jwt = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescription));
 
+            if (response != null)
+                response.Headers.Authorization = "Bearer " + jwt;
+
+            return jwt;
             bool claimIsNotCurrentAudience(Claim c) => !(c.Type == "aud" && c.Value == currentAudience);
         }
 
