@@ -71,7 +71,7 @@ namespace AzureAuth.SessionService.AuthHandlers
 
             // The cookie path is set to the host name, so that the cookie is only sent to this host.
             // Usually this is controlled with domain, but that doesn't work with localhost.
-            CookieOptions defaultCookie() => new() { Expires = DateTimeOffset.Now.AddDays(7), HttpOnly = true, Secure = true, Path = req.Host.ToString() };
+            CookieOptions defaultCookie() => new() { Expires = DateTimeOffset.Now.AddDays(7), HttpOnly = true, Secure = true, Path = req.Host.ToString(), SameSite = SameSiteMode.Strict };
             static ClaimsEntity defaultClaims() => new() { Expires = DateTimeOffset.Now.AddDays(7), Duration = TimeSpan.FromMinutes(15), Recycled = true };
         }
 

@@ -43,7 +43,8 @@ internal class LogoutFunction
             Expires = DateTimeOffset.Now,
             HttpOnly = true,
             Secure = true,
-            Path = req.Host.ToString()
+            Path = req.Host.ToString(),
+            SameSite = SameSiteMode.Strict
         });
         return new OkResult();
     }
