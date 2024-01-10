@@ -35,8 +35,8 @@ public class DiamondSquareController : ControllerBase
     {
         // The diamond-square algorithm begins with a two-dimensional
         // square array of width and height 2^n + 1.
-        var size = (int)Math.Pow(2, mapMagnitude) + 1;
-        var data = new Span<float>(new float[size * size]);
+        int size = (int)Math.Pow(2, mapMagnitude) + 1;
+        Span<float> data = new(new float[size * size]);
 
         // (Data is stored in a one-dimensional array and idx is a helper
         // function to convert x and y coordinates to an index.)
@@ -46,7 +46,7 @@ public class DiamondSquareController : ControllerBase
         // decreases with each iteration by a factor of 2^−h, where h is
         // a value between 0.0 and 1.0 (lower values produce rougher
         // terrain).
-        var factor = 1.0f;
+        float factor = 1.0f;
         float rnd() => (Random.Shared.NextSingle() * 2 - 1) * factor;
         void decrease() => factor *= MathF.Pow(2, -h);
 
@@ -59,6 +59,7 @@ public class DiamondSquareController : ControllerBase
 
         do
         {
+            // (decrease the random value scale factor)
             decrease();
             // (half distance is used several times to find the midpoint, so calculate it once)
             var halfDistance = currentDistance / 2;
@@ -92,7 +93,7 @@ public class DiamondSquareController : ControllerBase
                     // values set, rather than four. There are a number
                     // of ways to handle this complication - the simplest
                     // being to take the average of just the three
-                    // adjacent values
+                    // adjacent values.
 
                     // (The square step is jagged so the offsets are re-used
                     // as both x and y coordinates.)

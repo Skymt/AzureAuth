@@ -5,7 +5,7 @@
     <title></title>
     <script type="text/javascript">
         class JWTClient {
-            #sessionService; #token; #refresh;
+            #sessionService; #token; #refresh; #fetch;
             constructor(sessionService) {
                 this.#sessionService = sessionService;
             }
@@ -14,7 +14,7 @@
                 let fetchOptions = { credentials: "include", method: "PATCH" };
                 if (authJWT) fetchOptions.headers = { Authorization: `Bearer ${authJWT}` }
 
-                return await fetch(`${this.#sessionService}/api/Login`, fetchOptions)
+                return await (this.#fetch || fetch)(`${this.#sessionService}/api/Login`, fetchOptions)
                     .then(r => r.json()).then(jwt => this.#jwt = jwt)
                     .then(_ => true).catch(_ => false);
             }
@@ -29,7 +29,7 @@
                 options ||= {}; options.headers ||= {};
                 options.headers[auth] = `Bearer ${this.#token}`;
 
-                return await fetch(endpoint, options)
+                return await (this.#fetch || fetch)(endpoint, options)
                     .then(async r => {
                         if (r.headers.has(auth)) {
                             var header = r.headers.get(auth);
@@ -38,6 +38,19 @@
                         return r;
                     });
             }
+
+            monkeyPatch(fetchContainer) {
+                if (!this.#fetch) {
+                    this.#fetch = fetchContainer.fetch;
+                    fetchContainer.fetch = async (endpoint, options) => await this.fetch(endpoint, options);
+                    return true;
+                } else {
+                    fetchContainer.fetch = this.#fetch;
+                    this.#fetch = null;
+                    return false;
+                }
+            }
+
             get authorized() { return !!this.#token; }
             get claims() { if (this.authorized) return JSON.parse(atob(this.#token.split('.')[1])); }
             set #jwt(jwt) {
@@ -89,7 +102,7 @@
             return client;
         }
 
-        async function drawACloud(client, roughness = .8) {
+        async function drawACloud(roughness = .8) {
             const magnitude = 10, size = Math.pow(2, magnitude) + 1;
             if (!drawACloud.pixels) {
                 var canvas; document.body.append(canvas = document.createElement("canvas"));
@@ -99,7 +112,7 @@
             }
 
             let fetchDiamondSquareFloatArray = async _ =>
-                await client.fetch(`/diamondSquare/${magnitude}?roughness=${roughness}`)
+                await fetch(`/diamondSquare/${magnitude}?roughness=${roughness}`)
                     .then(r => r.blob()).then(b => b.arrayBuffer()).then(b => new Float32Array(b));
             
             let [red, green, blue] = await Promise.all([
