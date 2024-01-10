@@ -7,9 +7,14 @@ namespace AzureAuth.ReferenceAPI.Controllers;
 [Route("[controller]")]
 public class DiamondSquareController : ControllerBase
 {
-    // (Implementation comments are in parentheses.)
     [HttpGet, Route("{magnitude}"), Authorize(Roles = "AlgorithmEvaluator")]
-    public float[] Get(int magnitude, float roughness = .8f) => RunDiamondSquare(magnitude, roughness);
+    public FileContentResult Get(int magnitude, float roughness = .8f)
+    {
+        var datafloats = RunDiamondSquare(magnitude, roughness);
+        var databytes = new byte[datafloats.Length * sizeof(float)];
+        Buffer.BlockCopy(datafloats, 0, databytes, 0, databytes.Length);
+        return File(databytes, "application/octet-stream");
+    }
 
     //https://en.wikipedia.org/wiki/Diamond-square_algorithm
     // (Follows the spirit of the Wikipedia article with quotes
