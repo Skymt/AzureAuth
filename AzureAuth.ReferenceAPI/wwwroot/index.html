@@ -133,6 +133,65 @@
             drawACloud.context.putImageData(drawACloud.pixels, 0, 0);
         }
 
+        function animateCloud() {
+            if (!drawACloud.pixels) return;
+            var hueOffset = 0;
+            var hues = [];
+            var running = true;
+            for (var idx = 0; idx < drawACloud.pixels.data.length; idx += 4) {
+                hues.push(RGB2HSL(
+                    drawACloud.pixels.data[idx + 0],
+                    drawACloud.pixels.data[idx + 1],
+                    drawACloud.pixels.data[idx + 2]
+                ));
+            }
+            let render = _ => {
+                hueOffset += .005;
+                if(hueOffset > 1) hueOffset -= 1;
+                for (var idx = 0; idx < hues.length; idx++) {
+                    var hsl = hues[idx];
+                    var hue = hsl[0] + hueOffset;
+                    if (hue > 1) hue -= 1;
+                    [drawACloud.pixels.data[idx * 4 + 0], drawACloud.pixels.data[idx * 4 + 1], drawACloud.pixels.data[idx * 4 + 2]] = HSL2RGB(hue, hsl[1], hsl[2]);
+                }
+
+                drawACloud.context.putImageData(drawACloud.pixels, 0, 0);
+                if (running) requestAnimationFrame(render);
+            }
+            render();
+            return _ => !(running = false);
+        }
+        function RGB2HSL(r, g, b) {
+            r /= 255, g /= 255, b /= 255;
+            let max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            if (max == min) { h = s = 0; } else {
+                let d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                } h /= 6;
+            } return [h, s, l];
+        }
+        function HSL2RGB(h, s, l) {
+            let r, g, b;
+            if (s == 0) { r = g = b = l; } else {
+                let hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1; if (t > 1) t -= 1;
+                    if (t < 1 / 6) return p + (q - p) * 6 * t;
+                    if (t < 1 / 2) return q;
+                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                    return p;
+                }
+                let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                let p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1 / 3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1 / 3);
+            } return [r * 255, g * 255, b * 255];
+        }
     </script>
 
     <style>
